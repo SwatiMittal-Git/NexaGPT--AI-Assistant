@@ -8,21 +8,22 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
-// 🔥 FIX HERE
-app.use("/api/chat", chatRoutes);
+// 🔥 BASE ROUTE
+app.use("/api", chatRoutes);
 
-app.listen(PORT, () => {
-  console.log(`server running on ${PORT}`);
-  connectDB();
+// 🔹 optional test route (GET works in browser)
+app.get("/", (req, res) => {
+  res.send("Backend is running");
 });
 
-const connectDB = async () => {
+app.listen(PORT, async () => {
+  console.log(`server running on ${PORT}`);
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected with Database!");
   } catch (err) {
-    console.log("Failed to connect with Db", err);
+    console.log("DB connection failed", err);
   }
-};
+});
